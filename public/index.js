@@ -1,5 +1,6 @@
 var rainbow;
 var i = 0;
+var color = `hsl(${i},100%,50%)`;
 var title;
 class MainScene extends Phaser.Scene {
   constructor() {
@@ -76,10 +77,12 @@ class MainScene extends Phaser.Scene {
 
   update(){
 
-
-        var color = `hsl(${i},100%,50%)`;
+    color = `hsl(${i},100%,50%)`;
     title.setShadow(2, 2, color, 2, true, true)
-    i=i+2
+    
+    document.querySelectorAll(".rainbow").forEach(signupButon=>{signupButon.style.backgroundColor = color})
+    
+    i+=2
         if (i === 360) {
           i = 0;
         }

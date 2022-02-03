@@ -64,7 +64,7 @@ function userAnimation (){
         currentDirection = 3
         gameState.player.anims.play("runUp", true);
         gameState.player.y-=5
-      }  else {
+      }  else if ( gameState.cursors.right.isUp || gameState.cursors.left.isUp || gameState.cursors.down.isUp || gameState.cursors.up.isUp ) {
         gameState.player.setFrame(4 * currentDirection);
       }
     }
@@ -140,6 +140,7 @@ class MainScene extends Phaser.Scene {
 
       //Initializes movement for keyboard and mouse
       userAnimation()
+      console.log()
     }
   }
 

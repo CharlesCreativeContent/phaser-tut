@@ -68,7 +68,7 @@ class MainScene extends Phaser.Scene {
         if (element && element.style.display === "none") {
           element.style.display = "block";
           let loginButton = document.querySelector('[class="login second"]');
-          let signUpButton = document.querySelector('[class="signup second"]');
+          let signUpButton = document.querySelector('[class="signup second rainbow"]');
           loginButton.addEventListener("click", showLogin);
           signUpButton.addEventListener("click", showSignUp);
         }

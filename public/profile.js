@@ -252,7 +252,7 @@ class MainScene extends Phaser.Scene {
     gameState.player = this.add.sprite(500, 2200, "hero");
 
     //sets up camera
-    this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
+    this.cameras.main.setBounds(0, 0, mapWidth, mapHeight-blockSize);
     this.cameras.main.startFollow(gameState.player, true, 0.5, 0.5);
 
     this.anims.create({

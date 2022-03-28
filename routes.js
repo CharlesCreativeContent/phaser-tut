@@ -13,6 +13,11 @@ let maps= {
     app.get('/', function(req, res) {
         res.render('index.ejs');
     });
+
+    // wild battle page 
+    app.get('/wild', isLoggedIn, function(req, res) {
+        res.render('wild.ejs');
+    });
     // DARATBASE USER VERIFICATION
     function checkForUserData(result, email){
       return result.filter(x=>x.name===email)[0]

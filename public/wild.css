@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-sizing: border-box;
+}
+body{
+  height: 100vh;
+  width: 100vw;
+}
+#moves, .modal{
+  text-transform: capitalize;
+  text-align: center;
+}
+main {
+  height: 80vh;
+}
+
+nav ol {
+  height: 20vh;
+}
+
+nav li {
+  float: left;
+  width: 50vw;
+  height: 50%;
+  text-align: center;
+  border: 1px solid black;
+  font-size: 1.6rem;
+}
+
+.disappear {
+  display: none;
+}
+
+main section {
+  height: 25vh;
+}
+
+img {
+  height: 25vh;
+  float: right;
+}
+
+#playerImg {
+  height: 35vh;
+  float: left;
+}

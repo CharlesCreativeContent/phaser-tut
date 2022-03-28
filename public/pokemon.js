@@ -85,7 +85,7 @@ function checkForMonsters() {
     save()
     saveOpponent(Trainer.wild(Trainer.encounters[user.location]))
     currentDirection = null
-    window.location.href = "./wild.html"
+    window.location.href = "./wild"
   }
 }
 

@@ -28,11 +28,12 @@ function mobileUpButtons(button){
 console.log("up")
   currentDirection = null
 }
+
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("touchstart",mobileDownButtons)
+  el.addEventListener("mousedown",mobileDownButtons)
 })
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("touchend",mobileUpButtons)
+  el.addEventListener("mouseup",mobileUpButtons)
 })
 
 function mobileButtonsUp(){

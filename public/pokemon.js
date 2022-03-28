@@ -18,6 +18,11 @@ let background;
 let pointer;
 let touchX;
 let touchY;
+let leftButton;
+let rightButton;
+let upButton;
+let downButton;
+
 //updating map info
 function mobileDownButtons(button){
   button.preventDefault()
@@ -135,25 +140,58 @@ let move = [
 //runs controls for user animation
 function userAnimation() {
   if (gameState.player) {
-    if (gameState.cursors.down.isDown || touchX >500) {
+    if (gameState.cursors.down.isDown ) {
       currentDirection = 0;
-    } else if (gameState.cursors.left.isDown  || touchX <500) {
+    } else if (gameState.cursors.left.isDown ) {
       currentDirection = 1;
     } else if (gameState.cursors.right.isDown) {
       currentDirection = 2;
     } else if (gameState.cursors.up.isDown) {
       currentDirection = 3;
-    } else if (
-      gameState.cursors.right.isUp ||
-      gameState.cursors.left.isUp ||
-      gameState.cursors.down.isUp ||
-      gameState.cursors.up.isUp
+    } else if ( currentDirection === null || (gameState.cursors.right.isUp &&
+      gameState.cursors.left.isUp &&
+      gameState.cursors.down.isUp &&
+      gameState.cursors.up.isUp && pointer.isUp)
     ) {
-      gameState.player.setFrame(4 * currentDirection);
+      gameState.player.setFrame(4 * (currentDirection === null? 0 : currentDirection));
       currentDirection = null;
     }
   }
 }
+//runs controls for user animation
+function mouseClick() {
+
+      if (pointer.isDown) {
+      let touchX = pointer.x;
+      let touchY = pointer.y;
+        let windowWidth = window.innerWidth
+        let windowHeight = window.innerHeight
+      let buttonWidth = windowWidth*(0.6)
+      let buttonHeight = buttonWidth
+        let windowWidthCenter = windowWidth/2
+        let windowHeightCenter = windowHeight-(buttonHeight/2)
+
+
+
+
+      if( touchX > windowWidth*(0.2) && touchX < windowWidth*(0.8) && touchY > windowHeight - buttonHeight ){
+          console.log("window: ",windowWidth,windowHeight)
+          let xCheck = touchX-windowWidthCenter
+          let yCheck = touchY-windowHeightCenter
+          let xDistance = Math.abs(xCheck)
+          let yDistance = Math.abs(yCheck)
+          if(xCheck < 0 && xDistance > yDistance) currentDirection = 1
+          if(xCheck > 0 && xDistance > yDistance) currentDirection = 2
+          if(yCheck < 0 && xDistance < yDistance) currentDirection = 3
+          if(yCheck > 0 && xDistance < yDistance) currentDirection = 0
+          console.log("xDistance: ", xDistance)
+          console.log("yDistance: ", yDistance)
+          console.log("[x,y]: ", xCheck, yCheck)
+
+
+      }
+      }
+    }
 
 class MainScene extends Phaser.Scene {
   constructor() {
@@ -215,7 +253,7 @@ class MainScene extends Phaser.Scene {
     gameState.cursors = this.input.keyboard.createCursorKeys();
 
     //handles mouse clicks
-    var pointer = this.input.activePointer;
+    pointer = this.input.activePointer;
 
 
 
@@ -272,17 +310,20 @@ class MainScene extends Phaser.Scene {
       repeat: -1
     });
   }
+
+
   update() {
 
+    currentDirection = null
 
-  if (pointer.isDown) {
-    var touchX = pointer.x;
-    var touchY = pointer.y;
-  }
-    //Initializes movement for keyboard and mouse
-    userAnimation();
 
-    mouseClicks();
+
+    mouseClick()
+
+
+      //Initializes movement for keyboard
+      userAnimation();
+
 
     if (move[currentDirection] && verifyNextStep(currentDirection)) {
       move[currentDirection]();

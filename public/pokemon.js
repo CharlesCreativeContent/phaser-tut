@@ -30,10 +30,10 @@ console.log("up")
 }
 
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("mousedown",mobileDownButtons)
+  el.addEventListener("mouseover",mobileDownButtons)
 })
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("mouseup",mobileUpButtons)
+  el.addEventListener("mouseout",mobileUpButtons)
 })
 
 function mobileButtonsUp(){

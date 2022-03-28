@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Polymon</title>
+
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+
+    <!--========================Bootstrap========================-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </link>
+
+    <link rel="preload" href="pokeDex.js" as="script">
+    <link rel="preload" href="user.js" as="script">
+    <link rel="stylesheet" href="wild.css">
+  </head>
+  <body>
+
+
+
+  <main>
+    <section>
+      <label>HP: <progress id="opponentHP" style="background-color: green;" value="100" max="100"></progress></label>
+      <img style="display:none;" id="enemy" src="#"/>
+    </section>
+    <section id="player">
+
+      <label>HP: <progress id="HP" value="100" max="100"></progress></label>
+      <img style="display:none;" id="playerImg" src="#"/>
+
+    </section>
+  </main>
+
+  <nav>
+    <ol id="options">
+      <li id="fight" onclick="fight()">Fight</li>
+      <li id="bag" onclick="bag()">Bag</li>
+      <li id="monsters" onclick="monsters()">Monsters</li>
+      <li id="run" onclick="run()">Run</li>
+    </ol>
+    <ol id="moves" class="disappear">
+      <li id="move1"></li>
+      <li id="move2"></li>
+      <li id="move3"></li>
+      <li id="move4"></li>
+    </ol>
+  </nav>
+
+  <div id="popUp" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content text-white bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.52.0/phaser.min.js"></script>
+  <script src="pokeDex.js" charset="utf-8"></script>
+  <script src="user.js" charset="utf-8"></script>
+  <script src="wild.js" charset="utf-8"></script>
+</body>
+</html>

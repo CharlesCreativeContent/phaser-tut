@@ -27,11 +27,10 @@
 
     #button1,#button2,#button3,#button4{
       display: none;
-      cursor:pointer;
     }
 
-    @media only screen and ( max-width: 500px){
-      #button1,#button2,#button3,#button4{
+    @media only screen and ( max-width: 1280px){
+      #button1,#button2,#button3,#button4,#button5{
       display: block;
       position: absolute;
       height:10%;
@@ -39,26 +38,30 @@
       bottom: 0;
       left: 50%;
       opacity: 0.5;
-      transform: translate(-150%, -50%);
+      transform: translate(-150%, -100%);
       }
       #button2{
+      transform: translate(-50%, -200%);
+      }
+      #button5{
       transform: translate(-50%, -100%);
       }
       #button3{
       transform: translate(-50%, 0);
       }
       #button4{
-      transform: translate(50%, -50%);
+      transform: translate(50%, -100%);
       }
     }
   </style>
 
   </head>
   <body style="background:black; height: 100vh; width: 100vw;">
-  <button id="button1" type="button" class="btn btn-secondary">◀</button>
-  <button id="button2" type="button" class="btn btn-secondary">▲</button>
-  <button id="button3" type="button" class="btn btn-secondary">▼</button>
-  <button id="button4" type="button" class="btn btn-secondary">▶</button>
+  <button id="button1" style="pointer-events:none;" type="button" class="btn btn-secondary">◀</button>
+  <button id="button2" style="pointer-events:none;" type="button" class="btn btn-secondary">▲</button>
+  <button id="button5" style="pointer-events:none;" type="button" class="btn btn-secondary"></button>
+  <button id="button3" style="pointer-events:none;" type="button" class="btn btn-secondary">▼</button>
+  <button id="button4" style="pointer-events:none;" type="button" class="btn btn-secondary">▶</button>
 </body>
 
 

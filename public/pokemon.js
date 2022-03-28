@@ -84,6 +84,7 @@ function checkForMonsters() {
   if (dice > MONSTER_FEAR) {
     save()
     saveOpponent(Trainer.wild(Trainer.encounters[user.location]))
+    currentDirection = null
     window.location.href = "./wild.html"
   }
 }

@@ -26,21 +26,16 @@ function mobileDownButtons(button){
   currentDirection = id
 }
 function mobileUpButtons(button){
-  button.preventDefault()
 console.log("up")
   currentDirection = null
 }
-
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("mousedown",mobileDownButtons)
+  el.addEventListener("touchstart",mobileDownButtons)
 })
 document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("mouseup",mobileUpButtons)
+  el.addEventListener("touchend",mobileUpButtons)
 })
 
-function mobileButtonsUp(){
-  currentDirection = null;
-}
 function adjustMap(){
 map = Routes[user.location];
 mapHeight = BLOCK_SIZE * map.length;
@@ -137,15 +132,12 @@ let move = [
   }
 ];
 
-//handles mouse clicks
-function mouseClicks() {}
-
 //runs controls for user animation
 function userAnimation() {
   if (gameState.player) {
-    if (gameState.cursors.down.isDown) {
+    if (gameState.cursors.down.isDown || touchX >500) {
       currentDirection = 0;
-    } else if (gameState.cursors.left.isDown) {
+    } else if (gameState.cursors.left.isDown  || touchX <500) {
       currentDirection = 1;
     } else if (gameState.cursors.right.isDown) {
       currentDirection = 2;
@@ -222,6 +214,10 @@ class MainScene extends Phaser.Scene {
     //Turns on key inputs
     gameState.cursors = this.input.keyboard.createCursorKeys();
 
+    //handles mouse clicks
+    var pointer = this.input.activePointer;
+
+
 
 
     gameState.player = this.add.sprite(user.x, user.y, user.skin);
@@ -277,6 +273,12 @@ class MainScene extends Phaser.Scene {
     });
   }
   update() {
+
+
+  if (pointer.isDown) {
+    var touchX = pointer.x;
+    var touchY = pointer.y;
+  }
     //Initializes movement for keyboard and mouse
     userAnimation();
 

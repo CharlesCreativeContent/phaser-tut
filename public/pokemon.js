@@ -20,11 +20,13 @@ let touchX;
 let touchY;
 //updating map info
 function mobileDownButtons(button){
+  button.preventDefault()
   let id = button.target.id.slice(-1)
   console.log(id)
   currentDirection = id
 }
 function mobileUpButtons(button){
+  button.preventDefault()
 console.log("up")
   currentDirection = null
 }

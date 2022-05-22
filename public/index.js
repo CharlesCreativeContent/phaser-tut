@@ -8,10 +8,36 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
+
+  // add clickMe test
+  title = this.add
+    .text(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+      "CryptoMon",
+      {
+    font: "50px Roboto Condensed",
+    fill: "#fff"
+  });
+  title.setStroke("#000000", 8);
+  title.setShadow(2, 2, "#00ff00", 2, true, true).setDepth(3).setOrigin(0.5)
+    .setInteractive()
+    .on("pointerdown", () => {
+      let element = document.getElementById("input-box");
+      if (element && element.style.display === "none") {
+        element.style.display = "block";
+        let loginButton = document.querySelector('[class="login second"]');
+        let signUpButton = document.querySelector('[class="signup second rainbow"]');
+        loginButton.addEventListener("click", showLogin);
+        signUpButton.addEventListener("click", showSignUp);
+      }
+    });
+
     // scale the box
     const scaleBox = (scale) => {
       let box = document.getElementById("input-box");
       if (box) {
+        title.setScale( window.innerWidth < 800 ? 2.5 :window.innerWidth < 1100 ? scale : 1)
         box.style.transform = `scale(${scale})`;
         box.style.transformOrigin = "top left";
         box.style.top = `${
@@ -28,60 +54,25 @@ class MainScene extends Phaser.Scene {
     };
 
     // initial scale
-    let scale =
-      this.game.scale.displaySize.width / this.game.scale.gameSize.width;
+    let scale = window.innerWidth < 1281 ?
+    this.game.scale.displaySize.width / this.game.scale.gameSize.width :
+    2 * (this.game.scale.displaySize.width / this.game.scale.gameSize.width)
     scaleBox(scale);
 
     // on resize listener
     this.scale.on("resize", (gameSize, baseSize, displaySize, resolution) => {
-      let scale = displaySize.width / gameSize.width;
-      scaleBox(scale);
+      let scale = displaySize.width / gameSize.width
+      scaleBox(window.innerWidth < 1281 ? 2 * scale : scale);
     });
-
-    // stores all created phaser texts
-    let createdTexts = {};
-
-    // creates a new phaser text
-    const createText = (name, i) => {
-      let text =
-        createdTexts[name] ||
-        this.add.text(10, 100 + 20 * i, "").setColor("black");
-      createdTexts[name] = text;
-      return text;
-    };
-
-    // add clickMe test
-    title = this.add
-      .text(
-        this.cameras.main.width / 2,
-        this.cameras.main.height / 2,
-        "CryptoMon",
-        {
-      font: "50px Roboto Condensed",
-      fill: "#fff"
-    });
-    title.setStroke("#000000", 8);
-    title.setShadow(2, 2, "#00ff00", 2, true, true).setDepth(3).setOrigin(0.5)
-      .setInteractive()
-      .on("pointerdown", () => {
-        let element = document.getElementById("input-box");
-        if (element && element.style.display === "none") {
-          element.style.display = "block";
-          let loginButton = document.querySelector('[class="login second"]');
-          let signUpButton = document.querySelector('[class="signup second rainbow"]');
-          loginButton.addEventListener("click", showLogin);
-          signUpButton.addEventListener("click", showSignUp);
-        }
-      });
   }
 
   update(){
 
     color = `hsl(${i},100%,50%)`;
     title.setShadow(2, 2, color, 2, true, true)
-    
+
     document.querySelectorAll(".rainbow").forEach(signupButon=>{signupButon.style.backgroundColor = color})
-    
+
     i+=2
         if (i === 360) {
           i = 0;
@@ -93,6 +84,7 @@ var config = {
   type: Phaser.AUTO,
     mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    transparent: true,
   scale: {
     parent: "phaser-example",
     mode: Phaser.Scale.FIT,

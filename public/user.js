@@ -1,20 +1,28 @@
-let user = localStorage.getItem("user") ? loadUser() : new User(getPlayerName(),[], {
-  team:[new Poke(99,99)],
+let user =  localStorage.getItem("user") ? loadUser() : new User(getPlayerName(),[], {
+  team:[new Poke(99,15)],
   skills: [],
-  skin: "hero",
+  skin: defaultSkins.sort(()=>Math.random()-0.5)[0],
   money: 1000,
   bag: [{name: "pokeball",count:5}],
   badges: [],
   picture: "https://placekitten.com/200/200",
   computer: [],
-  location: "Pallet Town",
+  location: "Town 9",
   x: 1050,
   y: 200,
+  savePosition: {location:"overworld2",x:750,y:450},
+  ...{location:"overworld2",x:750,y:450}
 })
 //sets the skin of the player
-if(Skins.hasOwnProperty(user.name.toLowerCase())){
-  user.skin = Skins[user.name.toLowerCase()]
+if(Skins.includes(user.name.toLowerCase())){
+  user.skin = user.name.toLowerCase()
 }
 
-let opponent = localStorage.getItem("opponent") ? loadOpponent() : Trainer.wild(Trainer.encounters[user.location])
+let fakeOpponent = Trainer.encounters[user.location]
+// fakeOpponent.ids = fakeOpponent.ids[0]
+// fakeOpponent.ids = fakeOpponent.ids[3]
+// fakeOpponent.ids = [801]
+
+
+let opponent = localStorage.getItem("opponent") ? loadOpponent() : Trainer.wild(fakeOpponent)
 // localStorage.clear()

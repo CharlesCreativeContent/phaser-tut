@@ -1,67 +1,256 @@
+
+let userData = {};
+let game;
+
 /////STATIC VARIBALES///////
 const BLOCK_SIZE = 50; //px//
 let WALK_SPEED = 5; //px//
 let MONSTER_FEAR = 0.99; //Probability of seeing pokemon
-save()
 
 
 const gameState = {
-  active: true
+  counter: 0,
+  active: true,
+  background: null,
+  blackness: {},
+  result: [],
+  currentDirection: null,
+  map: [],
+  mapHeight: window.innerHeight,
+  mapWidth: window.innerWidth,
+  move: [
+    function () {
+      gameState.player.anims.play("runDown", true);
+      gameState.player.y += WALK_SPEED;
+      user.walkDown = WALK_SPEED
+    },
+    function () {
+      gameState.player.anims.play("runLeft", true);
+      gameState.player.x -= WALK_SPEED;
+      user.walkLeft = WALK_SPEED
+    },
+    function () {
+      gameState.player.anims.play("runRight", true);
+      gameState.player.x += WALK_SPEED;
+      user.walkRight = WALK_SPEED
+    },
+    function () {
+      gameState.player.anims.play("runUp", true);
+      gameState.player.y -= WALK_SPEED;
+      user.walkUp = WALK_SPEED
+    }
+  ],
+  toggleCutscene: function(){
+    gameState.cutscene ? gameState.cutscene = null : gameState.cutscene = true
+  },
+  stopPlayerMovement: function(){
+    gameState.currentDirection = null
+  }
 };
-let currentDirection = null;
-let userData = {};
-let map = [];
-let mapHeight = 0;
-let mapWidth = 0;
-let game;
-let background;
-let pointer;
-let touchX;
-let touchY;
-let leftButton;
-let rightButton;
-let upButton;
-let downButton;
 
-//updating map info
-function mobileDownButtons(button){
-  button.preventDefault()
-  let id = button.target.id.slice(-1)
-  console.log(id)
-  currentDirection = id
+
+
+adjustMap()
+save()
+
+
+
+
+class MainScene extends Phaser.Scene {
+  constructor() {
+    super({ key: "MainScene" });
+  }
+
+  preload() {
+    for(let img in Images){
+      let imgInfo = Images[img]
+      if(imgInfo.type==="image") this.load.image(img, imgInfo.img);
+      if(img===user.skin || imgInfo.type==="gif") this.load.spritesheet(img, imgInfo.img, {
+          frameWidth: imgInfo.frameWidth,
+          frameHeight: imgInfo.frameHeight
+        });
+    }
+  }
+
+  create() {
+
+    //clear moveBackground
+    document.querySelector("body").style.backgroundImage = "none"
+
+  gameState.pointer = this.input.activePointer;
+
+
+  loadBackgroundAnimations(this)
+
+
+//make buttons appear
+
+toggleDPad()
+    //creates background for map
+
+    gameState.background = moveBackground(this)
+    paintMap(this)
+    //Turns on key inputs
+    gameState.cursors = this.input.keyboard.createCursorKeys();
+
+    developerMode(this)
+
+
+
+    gameState.player = this.add.sprite(user.x, user.y, user.skin);
+
+    gameState.player.setDepth(1)
+
+    //if skin needs to be bigger, set scale
+    if(Images[user.skin].scale) gameState.player.setScale(Images[user.skin].scale)
+
+    this.cameras.main.startFollow(gameState.player, true, 0.5, 0.5);
+
+    adjustCamera(this.cameras)
+
+    loadUserRunAnimations(this)
+
+  }
+
+
+  update() {
+    //sets up mouse clicks and mobile touch
+    gameState.stopPlayerMovement()
+
+    gameState.pointer = this.input.activePointer;
+
+    mouseClick()
+
+
+      //Initializes movement for keyboard
+      userAnimation();
+
+      //stops user for cutscenes
+      if(gameState.cutscene) gameState.stopPlayerMovement()
+
+    if (gameState.move[gameState.currentDirection] && verifyNextStep(gameState.currentDirection) ) {
+
+      gameState.move[gameState.currentDirection]();
+
+      lookAround(this.cameras,this);
+
+    }
+  }
 }
-function mobileUpButtons(button){
-console.log("up")
-  currentDirection = null
+
+var config = {
+  type: Phaser.AUTO,
+  width: window.innerWidth,
+  height: window.innerHeight,
+  scale: {
+    parent: "game",
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: window.innerWidth,
+    height: window.innerHeight
+  },
+  inputTouch: true,
+  transparent: true,
+  pixelArt: true,
+  roundPixels: false,
+  audio: { noAudio: false },
+  physics: {
+    default: "arcade",
+    arcade: {
+      enableBody: true
+    }
+  },
+  scene: [MainScene]
+};
+
+game = new Phaser.Game(config);
+
+
+
+function loadBackgroundAnimations(game){
+
+  for(let gif in Images){
+    let img = Images[gif]
+    if(img.type === "gif" ){
+
+      game.anims.create({
+        key: gif,
+        frames: game.anims.generateFrameNumbers(gif, {
+          start: 0,
+          end: img.frames-1
+        }),
+        frameRate: 7,
+        repeat: -1,
+      });
+
+    }
+  }
 }
-document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("touchstart",mobileDownButtons)
-})
-document.querySelectorAll("button").forEach(el=>{
-  el.addEventListener("touchend",mobileUpButtons)
-})
+
+
+
+function adjustCamera(camera){
+camera.main.setBounds(0, 0, gameState.mapWidth, gameState.mapHeight);
+}
+
+
 
 function adjustMap(){
-map = Routes[user.location];
-mapHeight = BLOCK_SIZE * map.length;
-mapWidth = BLOCK_SIZE * map[0].length;
+gameState.map = Routes[user.location];
+gameState.mapHeight = BLOCK_SIZE * gameState.map.length;
+gameState.mapWidth = BLOCK_SIZE * gameState.map[0].length;
 }
-adjustMap()
+
+
+
+
+function moveBackground(wholeGame){
+  let location = user.location
+  let imgInfo = Images[location]
+  let image = imgInfo.img
+  let scale = imgInfo.scale
+  let type = imgInfo.type
+  if(type==="gif"){
+    let frameWidth = imgInfo.frameWidth
+    let frameHeight = imgInfo.frameHeight
+    let back = wholeGame.add.sprite(0, 0, location).setOrigin(0).setScale(scale)
+    if(window.innerWidth>=frameWidth) {
+      let other = wholeGame.add.sprite(frameWidth*scale, 0, location).setOrigin(0).setScale(scale).setFlipX(true)
+      other.anims.play(location, true);
+    }
+    if(window.innerHeight>=frameHeight) {
+      let other = wholeGame.add.sprite(0, frameHeight*scale, location).setOrigin(0).setScale(scale).setFlipY(true)
+      other.anims.play(location, true);
+    }
+    if(window.innerHeight>=frameHeight && window.innerWidth>=frameWidth) {
+      let other = wholeGame.add.sprite(frameWidth*scale, frameHeight*scale, location).setOrigin(0).setScale(scale).setFlipY(true).setFlipX(true)
+      other.anims.play(location, true);
+    }
+    back.anims.play(location, true);
+  return back
+  }else{
+  return wholeGame.add.image(0, 0, location).setOrigin(0).setScale(scale);
+  }
+}
+
+
 //given coordinates
 //returns block element in map
 //or 0 if nothing found
 function getBlock(x, y) {
-  if (x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) return 0;
-
+  if (x < 0 || y < 0 || x >= gameState.mapWidth || y >= gameState.mapHeight) return 0;
   let xBlock = Math.round(x / BLOCK_SIZE);
   let yBlock = Math.round(y / BLOCK_SIZE);
-  return map[yBlock][xBlock];
+  return gameState.map[yBlock][xBlock];
 }
+
 
 let getX = () => gameState.player.x;
 let getY = () => gameState.player.y;
 let getPlayerLocation = () => [getX(), getY()];
 let getCurrentBlock = () => getBlock(getX(), getY());
+
+let getCurrentIndex = () => [Math.round(getX() / BLOCK_SIZE), Math.round(getY() / BLOCK_SIZE)]
 
 function verifyNextStep(direction) {
   if (direction === null) return 0;
@@ -81,13 +270,72 @@ function verifyNextStep(direction) {
 //function that triggers a monster attack
 function checkForMonsters() {
   let dice = Math.random();
+  let encounter = Trainer.encounters[user.location]
+  console.log("before",encounter)
+  let userMaxLvl = Math.max(...user.team.map(pok=>pok.lvl))
   if (dice > MONSTER_FEAR) {
+  gameState.cutscene = true
+
+    let opponentStrength = Math.random()*100
+    let opponentRarity = 3
+    opponentRarity = opponentStrength > 95 && userMaxLvl > 50 ? 3 :
+                         opponentStrength > 80 && userMaxLvl > 40 ? 2 :
+                         opponentStrength > 60 && userMaxLvl > 30 ? 1 : 0
+    encounter.max += opponentRarity*15
+    encounter.min += opponentRarity*15
     save()
-    saveOpponent(Trainer.wild(Trainer.encounters[user.location]))
-    currentDirection = null
+
+    saveOpponent(Trainer.wild(encounter,opponentRarity))
     window.location.href = "./wild"
   }
 }
+
+
+
+
+function loadUserRunAnimations(game){
+  game.anims.create({
+    key: "runDown",
+    frames: game.anims.generateFrameNumbers(user.skin, {
+      start: 0,
+      end: 3
+    }),
+    frameRate: 7,
+    repeat: -1
+  });
+
+  game.anims.create({
+    key: "runLeft",
+    frames: game.anims.generateFrameNumbers(user.skin, {
+      start: 4,
+      end: 7
+    }),
+    frameRate: 7,
+    repeat: -1
+  });
+
+  game.anims.create({
+    key: "runRight",
+    frames: game.anims.generateFrameNumbers(user.skin, {
+      start: 8,
+      end: 11
+    }),
+    frameRate: 7,
+    repeat: -1
+  });
+
+  game.anims.create({
+    key: "runUp",
+    frames: game.anims.generateFrameNumbers(user.skin, {
+      start: 12,
+      end: 15
+    }),
+    frameRate: 7,
+    repeat: -1
+  });
+}
+
+
 
 //Grabs User Data from server to play Game
 async function getUserData(stat) {
@@ -102,6 +350,8 @@ async function getUserData(stat) {
   }
 }
 
+
+
 function teleport(x,y){
   gameState.player.x = x
   gameState.player.y = y
@@ -115,280 +365,200 @@ async function getMap() {
   var response = await fetch("/userMap");
   map = await response.json();
 }
-let move = [
-  function () {
-    gameState.player.anims.play("runDown", true);
-    gameState.player.y += WALK_SPEED;
-    user.walkDown = WALK_SPEED
-  },
-  function () {
-    gameState.player.anims.play("runLeft", true);
-    gameState.player.x -= WALK_SPEED;
-    user.walkLeft = WALK_SPEED
-  },
-  function () {
-    gameState.player.anims.play("runRight", true);
-    gameState.player.x += WALK_SPEED;
-    user.walkRight = WALK_SPEED
-  },
-  function () {
-    gameState.player.anims.play("runUp", true);
-    gameState.player.y -= WALK_SPEED;
-    user.walkUp = WALK_SPEED
-  }
-];
+
+
 
 //runs controls for user animation
 function userAnimation() {
   if (gameState.player) {
     if (gameState.cursors.down.isDown ) {
-      currentDirection = 0;
+      gameState.currentDirection = 0;
     } else if (gameState.cursors.left.isDown ) {
-      currentDirection = 1;
+      gameState.currentDirection = 1;
     } else if (gameState.cursors.right.isDown) {
-      currentDirection = 2;
+      gameState.currentDirection = 2;
     } else if (gameState.cursors.up.isDown) {
-      currentDirection = 3;
-    } else if ( currentDirection === null || (gameState.cursors.right.isUp &&
+      gameState.currentDirection = 3;
+    } else if ( gameState.currentDirection === null || (gameState.cursors.right.isUp &&
       gameState.cursors.left.isUp &&
       gameState.cursors.down.isUp &&
-      gameState.cursors.up.isUp && pointer.isUp)
+      gameState.cursors.up.isUp && gameState.pointer.isUp)
     ) {
-      gameState.player.setFrame(4 * (currentDirection === null? 0 : currentDirection));
-      currentDirection = null;
+      gameState.player.setFrame(4 * (gameState.currentDirection === null? 0 : gameState.currentDirection));
+      gameState.currentDirection = null;
     }
   }
 }
+
 //runs controls for user animation
 function mouseClick() {
-
-      if (pointer.isDown) {
-      let touchX = pointer.x;
-      let touchY = pointer.y;
-        let windowWidth = window.innerWidth
-        let windowHeight = window.innerHeight
+  if (gameState.pointer.isDown && window.innerWidth <= 1280) {
+      let touchX = gameState.pointer.x;
+      let touchY = gameState.pointer.y;
+      let windowWidth = window.innerWidth
+      let windowHeight = window.innerHeight
       let buttonWidth = windowWidth*(0.6)
-      let buttonHeight = buttonWidth
-        let windowWidthCenter = windowWidth/2
-        let windowHeightCenter = windowHeight-(buttonHeight/2)
-
-
-
+      let buttonHeight = windowHeight * (0.3)
+      let windowWidthCenter = windowWidth/2
+      let windowHeightCenter = windowHeight-(buttonHeight/2)
 
       if( touchX > windowWidth*(0.2) && touchX < windowWidth*(0.8) && touchY > windowHeight - buttonHeight ){
-          console.log("window: ",windowWidth,windowHeight)
-          let xCheck = touchX-windowWidthCenter
-          let yCheck = touchY-windowHeightCenter
-          let xDistance = Math.abs(xCheck)
-          let yDistance = Math.abs(yCheck)
-          if(xCheck < 0 && xDistance > yDistance) currentDirection = 1
-          if(xCheck > 0 && xDistance > yDistance) currentDirection = 2
-          if(yCheck < 0 && xDistance < yDistance) currentDirection = 3
-          if(yCheck > 0 && xDistance < yDistance) currentDirection = 0
-          console.log("xDistance: ", xDistance)
-          console.log("yDistance: ", yDistance)
-          console.log("[x,y]: ", xCheck, yCheck)
 
+      let middleLimits = [
+          touchX > windowWidth*(0.4),
+          touchX < windowWidth*(0.6),
+          touchY > windowHeight - (buttonHeight*(2/3)),
+          touchY < windowHeight - (buttonHeight*(1/3))
+      ]
 
-      }
-      }
-    }
+      if ( middleLimits.some(_=>_===false) ) {
 
-class MainScene extends Phaser.Scene {
-  constructor() {
-    super({ key: "MainScene" });
-  }
+          let leftCheck = touchX < (windowWidth*0.4) && touchY < windowHeight - (buttonHeight*(1/3)) && touchY > windowHeight - (buttonHeight*(2/3))
+          let rightCheck = touchX > (windowWidth*0.6) && touchY < windowHeight - (buttonHeight*(1/3)) && touchY > windowHeight - (buttonHeight*(2/3))
+          let upCheck = touchY < windowHeight - (buttonHeight*(2/3)) && touchX > windowWidth*(0.4) && touchX < windowWidth*(0.6)
+          let downCheck = touchY > windowHeight - (buttonHeight*(1/3)) && touchX > windowWidth*(0.4) && touchX < windowWidth*(0.6)
 
-  preload() {
-    console.log(user.name)
-    for(let img in Images){
-      let imgInfo = Images[img]
-      if(imgInfo.type==="image"){
-      this.load.image(img, imgInfo.img);
-      }else{
-        this.load.spritesheet(img, imgInfo.img, {
-          frameWidth: imgInfo.frameWidth,
-          frameHeight: imgInfo.frameHeight
-        });
+          if(leftCheck) gameState.currentDirection = 1
+          if(rightCheck) gameState.currentDirection = 2
+          if(upCheck) gameState.currentDirection = 3
+          if(downCheck) gameState.currentDirection = 0
       }
     }
   }
+}
 
-  create() {
+
+
+
+
     function standardBLOCK_SIZE(image,opacity=0.5) {
       image.setDisplaySize(BLOCK_SIZE, BLOCK_SIZE)
       image.setAlpha(opacity);
     }
-    let addImageToMap = (x, y, imageName) =>
-      this.add.image(x * BLOCK_SIZE, y * BLOCK_SIZE, imageName);
-    function addStandardOpaqueImage(x, y, imageName){
-      let currentImage = addImageToMap(x, y, imageName)
+    let addImageToMap = (x, y, imageName, game) =>
+      game.add.image(x * BLOCK_SIZE, y * BLOCK_SIZE, imageName);
+    function addStandardOpaqueImage(x, y, imageName, game){
+      let currentImage = addImageToMap(x, y, imageName,game)
       standardBLOCK_SIZE(currentImage)
       return currentImage
     }
-    //creates background for map
 
 
-    function moveBackground(wholeGame){
-      let scale = Scales[user.location]
-      return wholeGame.add.image(0, 0, user.location).setOrigin(0).setScale(scale);
-    }
-
-    background = moveBackground(this)
-
-
-    paintMap()
 
     //creates walking map for user
-    function paintMap(){
-    map.forEach((row, y) => {
+    function paintMap(game){
+    gameState.map.forEach((row, y) => {
       row.forEach((num, x) => {
-        if (num === 1) addStandardOpaqueImage(x, y, "green");
-        if (num == 2) addStandardOpaqueImage(x, y, "red");
-        if (num == 3) addStandardOpaqueImage(x, y, "blue");
+        if (num === 1) addStandardOpaqueImage(x, y, "green",game);
+        if (num == 2) addStandardOpaqueImage(x, y, "red",game);
+        if (num == 3) addStandardOpaqueImage(x, y, "blue",game);
       });
     });
     }
 
-    //Turns on key inputs
-    gameState.cursors = this.input.keyboard.createCursorKeys();
 
-    //handles mouse clicks
-    pointer = this.input.activePointer;
+          function lookAround(camera,state) {
+            let curretBlock = getCurrentBlock();
+            if (curretBlock === 2) checkForMonsters();
+            if (typeof curretBlock === "object") {
+            gameState.counter++
+            if(gameState.counter===3)window.location.href = "./profile"
+              openDoor(camera,state);
+              paintMap(state)
+            }
+          }
 
+          //UI function to toggle mobile buttons
 
-
-
-    gameState.player = this.add.sprite(user.x, user.y, user.skin);
-    gameState.player.setDepth(1)
-
-    this.cameras.main.startFollow(gameState.player, true, 0.5, 0.5);
-
-
-    function adjustCamera(camera){
-    camera.main.setBounds(0, 0, mapWidth, mapHeight);
+          function toggleDPad(){
+        //make buttons appear
+        if(window.innerWidth < 1280){
+          document.querySelectorAll("button").forEach(element=>{element.style.display="block"})
+        }else{
+          document.querySelectorAll("button").forEach(element=>{element.style.display="none"})
+        }
     }
 
-    adjustCamera(this.cameras)
-
-    this.anims.create({
-      key: "runDown",
-      frames: this.anims.generateFrameNumbers(user.skin, {
-        start: 0,
-        end: 3
-      }),
-      frameRate: 7,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "runLeft",
-      frames: this.anims.generateFrameNumbers(user.skin, {
-        start: 4,
-        end: 7
-      }),
-      frameRate: 7,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "runRight",
-      frames: this.anims.generateFrameNumbers(user.skin, {
-        start: 8,
-        end: 11
-      }),
-      frameRate: 7,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "runUp",
-      frames: this.anims.generateFrameNumbers(user.skin, {
-        start: 12,
-        end: 15
-      }),
-      frameRate: 7,
-      repeat: -1
-    });
-  }
+          ///GAMESTATE FUNCTIONS
 
 
-  update() {
+          function changeMap(local,camera,state){
+            let { location, x, y } = local
+            gameState.background.destroy()
+            teleport(x,y)
+            adjustMap()
+            gameState.background = moveBackground(state)
+            adjustCamera(camera)
+          }
 
-    currentDirection = null
-
-
-
-    mouseClick()
-
-
-      //Initializes movement for keyboard
-      userAnimation();
-
-
-    if (move[currentDirection] && verifyNextStep(currentDirection)) {
-      move[currentDirection]();
-      lookAround(this.cameras,this);
-
-      function lookAround(camera,state) {
-        let curretBlock = getCurrentBlock();
-        if (curretBlock === 2) checkForMonsters();
-        if (typeof curretBlock === "object") openDoor(camera,state);
-      }
-
-      ///GAMESTATE FUNCTIONS
-
-      function adjustCamera(camera){
-      camera.main.setBounds(0, 0, mapWidth, mapHeight);
-      }
+          function openDoor(camera,state,auto=false) {
+            let local = {}
+            if(auto){
+              local.location = prompt("Destination?")
+              local.x = +prompt("x-value of location")
+              local.y = +prompt("y-value of location")
+            }else{
+              local = getBlock(getX(), getY())
+            }
+          user.teleport = local
+          changeMap(local,camera,state)
+          }
 
 
-      function changeMap(local,camera,state){
-        let { location, x, y } = local
-        background.destroy()
-        background = moveBackground(state)
-        teleport(x,y)
-        adjustMap()
-        adjustCamera(camera)
-      }
+          function developerMode(game){
 
-      function openDoor(camera,state) {
-      console.log("Door Open");
-      let local = getBlock(getX(), getY())
-      user.teleport = local
-      changeMap(local,camera,state)
-      }
+            game.input.keyboard.on('keydown-W', function(){
+              localStorage.clear()
+            })
+            game.input.keyboard.on('keydown-T', function(){
+              openDoor(game.camera,game,true)
+            })
+            game.input.keyboard.on('keydown-Z', function(){
+              gameState.toggleCutscene()
+            })
+            game.input.keyboard.on('keydown-P', function(){
+          gameState.player.x += 100
+            })
+            game.input.keyboard.on('keydown-L', function(){
+          gameState.player.y += 100
+            })
 
-      function moveBackground(wholeGame){
-        let scale = Scales[user.location]
-        return wholeGame.add.image(0, 0, user.location).setOrigin(0).setScale(scale);
-      }
+            game.input.keyboard.on('keydown-O', function(){
+              gameState.result.forEach(position=>{
+                Routes[user.location][+position[1]][position[0]] = 0
+              })
+              console.log(Routes[user.location])
+            })
 
+            game.input.keyboard.on('keydown-S', function(){
+          let locationInfo = getCurrentIndex().map(_=>_*50)
+              console.log({
+                location:user.location,
+                x:locationInfo[0],
+                y:locationInfo[1],
+              })
+            })
+
+          gameState.cursors.space.on("up", ()=>{
+          let [x,y] = getCurrentIndex()
+          if(! gameState.blackness[x]){
+          gameState.blackness[x] = new Set()
+          }
+          gameState.blackness[x].add(y)
+          },{once: true})
+
+          gameState.cursors.shift.on("up", ()=>{
+          let all = []
+          for(let key in gameState.blackness){
+          for(let num of [...gameState.blackness[key]]){
+          all.push([key,num])
+          }
+        }
+        gameState.result = all
+      },{once: true})
     }
-  }
-}
 
-var config = {
-  type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
-  scale: {
-    parent: "phaser-example",
-    mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: window.innerWidth,
-    height: window.innerHeight
-  },
-  transparent: true,
-  roundPixels: false,
-  audio: { noAudio: false },
-  physics: {
-    default: "arcade",
-    arcade: {
-      enableBody: true
-    }
-  },
-  scene: [MainScene]
-};
 
-game = new Phaser.Game(config);
+window.addEventListener("resize",function(){
+  toggleDPad()
+})

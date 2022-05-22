@@ -1,12 +1,20 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Polymon</title>
 
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js" as="script">
     <link rel="stylesheet" href="index.css">
-  <title>CryptoMon</title>
 </head>
 
 <body>
@@ -58,6 +66,22 @@
 
   </div>
 </body>
+
+
+<script charset="utf-8">
+document.querySelector("body").style.backgroundColor = `black`
+//dislays random loading image
+function rescale(){
+let desktopImages = ["/images/Load/background3.gif","/images/Load/background1.webp","/images/Load/background2.webp"]
+let mobileImages = ["/images/Load/background4.gif","/images/Load/background5.gif","/images/Load/background6.gif","/images/Load/background7.gif"]
+let loader = window.innerWidth<window.innerHeight ? mobileImages : desktopImages
+loader = loader.sort((a,b)=>Math.random()-0.5)[0]
+document.querySelector("body").style.backgroundImage = `url(${loader})`
+}
+window.addEventListener("resize",rescale)
+rescale()
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js"></script>
 <script src="/index.js"></script>
 

@@ -25,15 +25,14 @@
       padding: 0;
     }
 
-    #button1,#button2,#button3,#button4{
+    button{
       display: none;
     }
 
-    @media only screen and ( max-width: 1280px){
-      #button1,#button2,#button3,#button4,#button5{
-      display: block;
+    @media screen and (max-width:1280px){
+      button{
       position: absolute;
-      height:10%;
+      height:10vh;
       width:20vw;
       bottom: 0;
       left: 50%;
@@ -54,9 +53,8 @@
       }
     }
   </style>
-
   </head>
-  <body style="background:black; height: 100vh; width: 100vw;">
+  <body id="game" style="background-size: 100% auto;background-repeat: no-repeat;background-position: center;">
   <button id="button1" style="pointer-events:none;" type="button" class="btn btn-secondary">◀</button>
   <button id="button2" style="pointer-events:none;" type="button" class="btn btn-secondary">▲</button>
   <button id="button5" style="pointer-events:none;" type="button" class="btn btn-secondary"></button>
@@ -64,6 +62,30 @@
   <button id="button4" style="pointer-events:none;" type="button" class="btn btn-secondary">▶</button>
 </body>
 
+<script charset="utf-8">
+
+document.querySelector("body").style.backgroundColor = `white`
+//dislays random loading image;
+let pathToImages = "/images/Load/"
+let loaderImages = ["loader1.gif","loader2.gif","loader3.gif","loader4.gif","loader5.gif","loader6.gif","loader7.gif","loader8.gif","loader9.gif","loader10.gif",
+"loader11.gif","loader12.gif","loader13.gif","loader14.gif","loader15.gif","loader16.gif","loader17.gif","loader18.gif","loader19.gif","loader20.gif",
+"loader21.gif","loader22.gif","loader23.gif","loader24.gif","loader25.gif","loader26.gif","loader27.gif","loader28.gif","loader29.gif","loader30.gif",
+"loader31.gif","loader32.gif","loader33.gif","loader34.gif","loader35.gif","loader36.gif","loader37.gif","loader38.gif","loader39.gif","loader40.gif",
+"loader41.gif","loader42.gif","loader43.gif","loader44.gif","loader45.gif","loader46.gif","loader47.gif","loader48.gif"]
+let BackgroundColors = {
+"26": "black",
+}
+
+let loader = loaderImages.sort((a,b)=>Math.random()-0.5)[0]
+let loaderIndex = parseInt(loader.slice(6))
+if(loaderIndex>=26){
+
+document.querySelector("body").style.backgroundColor = `black`
+
+}
+
+document.querySelector("body").style.backgroundImage = `url(${ pathToImages + loader })`
+</script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.52.0/phaser.min.js"></script>
   <script src="pokeDex.js" charset="utf-8"></script>

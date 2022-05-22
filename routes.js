@@ -14,8 +14,8 @@ let maps= {
         res.render('index.ejs');
     });
 
-    // wild battle page 
-    app.get('/wild', isLoggedIn, function(req, res) {
+    // wild battle page
+    app.get('/wild', function(req, res) {
         res.render('wild.ejs');
     });
     // DARATBASE USER VERIFICATION
@@ -50,7 +50,7 @@ let maps= {
       })
     })
     // PROFILE SECTION =========================
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/profile', function(req, res) {
 
 db.collection('cryptoData').find({name: req.user.local.email}).toArray((err, result) => {
   if (err) return console.log(err)

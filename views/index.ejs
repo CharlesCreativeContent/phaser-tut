@@ -73,13 +73,12 @@ document.querySelector("body").style.backgroundColor = `black`
 //dislays random loading image
 function rescale(){
 let desktopImages = ["/images/Load/background3.gif","/images/Load/background1.webp","/images/Load/background2.webp"]
-let mobileImages = ["/images/Load/background4.gif","/images/Load/background5.gif","/images/Load/background6.gif","/images/Load/background7.gif"]
+let mobileImages = ["/images/Load/background5.gif","/images/Load/background6.gif","/images/Load/background7.gif"]
 let loader = window.innerWidth<window.innerHeight ? mobileImages : desktopImages
 loader = loader.sort((a,b)=>Math.random()-0.5)[0]
 document.querySelector("body").style.backgroundImage = `url(${loader})`
 }
 window.addEventListener("resize",rescale)
-rescale()
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js"></script>

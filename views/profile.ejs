@@ -52,15 +52,26 @@
       transform: translate(50%, -100%);
       }
     }
+
+
+
+    #blink_me{
+      position: absolute;
+      top:50vh;
+      left: 50vw;
+      transform: translate(-50%, 0);
+    }
   </style>
   </head>
   <body id="game" style="background-size: 100% auto;background-repeat: no-repeat;background-position: center;">
+  <h1 style="text-align: center;" id="blink_me">Loading</h1>
   <button id="button1" style="pointer-events:none;" type="button" class="btn btn-secondary">◀</button>
   <button id="button2" style="pointer-events:none;" type="button" class="btn btn-secondary">▲</button>
   <button id="button5" style="pointer-events:none;" type="button" class="btn btn-secondary"></button>
   <button id="button3" style="pointer-events:none;" type="button" class="btn btn-secondary">▼</button>
   <button id="button4" style="pointer-events:none;" type="button" class="btn btn-secondary">▶</button>
 </body>
+<!-- Jquery CDN-->
 
 <script charset="utf-8">
 
@@ -71,7 +82,7 @@ let loaderImages = ["loader1.gif","loader2.gif","loader3.gif","loader4.gif","loa
 "loader11.gif","loader12.gif","loader13.gif","loader14.gif","loader15.gif","loader16.gif","loader17.gif","loader18.gif","loader19.gif","loader20.gif",
 "loader21.gif","loader22.gif","loader23.gif","loader24.gif","loader25.gif","loader26.gif","loader27.gif","loader28.gif","loader29.gif","loader30.gif",
 "loader31.gif","loader32.gif","loader33.gif","loader34.gif","loader35.gif","loader36.gif","loader37.gif","loader38.gif","loader39.gif","loader40.gif",
-"loader41.gif","loader42.gif","loader43.gif","loader44.gif","loader45.gif","loader46.gif","loader47.gif","loader48.gif"]
+"loader41.gif","loader42.gif","loader43.gif","loader44.gif","loader45.gif","loader46.gif","loader47.gif"]
 let BackgroundColors = {
 "26": "black",
 }
@@ -85,10 +96,22 @@ document.querySelector("body").style.backgroundColor = `black`
 }
 
 document.querySelector("body").style.backgroundImage = `url(${ pathToImages + loader })`
+
 </script>
 
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.52.0/phaser.min.js"></script>
   <script src="pokeDex.js" charset="utf-8"></script>
   <script src="user.js" charset="utf-8"></script>
   <script src="pokemon.js" charset="utf-8"></script>
+
+  <script>
+
+  //Blink Loading icon
+  (function blink() {
+    $('#blink_me').fadeOut(500).fadeIn(500, blink);
+  })();
+  </script>
 </html>

@@ -77,6 +77,7 @@ class MainScene extends Phaser.Scene {
     //clear moveBackground
     document.querySelector("body").style.backgroundImage = "none"
 
+
   gameState.pointer = this.input.activePointer;
 
 
@@ -89,7 +90,7 @@ toggleDPad()
     //creates background for map
 
     gameState.background = moveBackground(this)
-    paintMap(this)
+    // paintMap(this)
     //Turns on key inputs
     gameState.cursors = this.input.keyboard.createCursorKeys();
 
@@ -109,6 +110,11 @@ toggleDPad()
     adjustCamera(this.cameras)
 
     loadUserRunAnimations(this)
+
+
+          //clear Loading
+
+          document.querySelector("#blink_me").remove()
 
   }
 
@@ -464,7 +470,7 @@ function mouseClick() {
             gameState.counter++
             if(gameState.counter===3)window.location.href = "./profile"
               openDoor(camera,state);
-              paintMap(state)
+              // paintMap(state)
             }
           }
 
